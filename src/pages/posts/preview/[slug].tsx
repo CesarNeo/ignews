@@ -27,7 +27,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
     if (data?.activeSubscription) {
       router.push(`/posts/${post.slug}`)
     }
-  }, [data])
+  }, [data, post.slug, router])
 
   return (
     <>
@@ -73,9 +73,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const post = {
     slug,
-    title: RichText.asText(response.data.title),
-    content: RichText.asHtml(response.data.content.splice(0, 3)),
-    updatedAt: new Date(response.last_publication_date).toLocaleDateString(
+    title: RichText.asText(response?.data.title),
+    content: RichText.asHtml(response?.data.content.splice(0, 3)),
+    updatedAt: new Date(response?.last_publication_date).toLocaleDateString(
       'pt-BR',
       {
         day: '2-digit',
@@ -88,6 +88,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post
-    }
+    },
+    revalidate: 60 * 30 //30 minutes
   }
 }
